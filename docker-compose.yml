@@ -6,4 +6,7 @@ services:
     ports:
       - "6697:6697"
     volumes:
-      - /znc-data
+      - "zncdata:/znc-data"
+
+volumes:
+  zncdata:
