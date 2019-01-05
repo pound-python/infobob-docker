@@ -1,12 +1,27 @@
 version: '3'
 
 services:
+  certbot:
+    image: "certbot/certbot"
+    depends_on:
+      - nginx
+    command: ["--version"]
+    volumes:
+      - "letsencrypt:/etc/letsencrypt"
+
+  nginx:
+    build: "./nginx-proxy"
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - "letsencrypt:/etc/letsencrypt"
+
   znc:
     image: "znc:1.7-slim"
-    ports:
-      - "6697:6697"
     volumes:
       - "zncdata:/znc-data"
 
 volumes:
+  letsencrypt:
   zncdata:
