@@ -22,6 +22,12 @@ services:
     volumes:
       - "zncdata:/znc-data"
 
+  infobob:
+    build: "./infobob"
+    volumes:
+      - "infobob:/app"
+
 volumes:
+  infobob:
   letsencrypt:
   zncdata:
