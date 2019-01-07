@@ -1,9 +1,8 @@
 FROM pypy:2
 
 WORKDIR /usr/src/app
-COPY requirements.txt ./
-COPY klein klein
-RUN pip wheel --no-cache-dir -r requirements.txt -w wheelhouse
+COPY src/current-requirements.txt ./
+RUN pip wheel --no-cache-dir -r current-requirements.txt -w wheelhouse
 
 FROM pypy:2-slim
 
@@ -14,9 +13,8 @@ RUN adduser --system --group --home /var/lib/infobob --disabled-login infobob
 
 WORKDIR /usr/src/app
 COPY --from=0 /usr/src/app/wheelhouse wheelhouse
-COPY requirements.txt ./
-COPY klein klein
-RUN pip install --no-cache-dir --no-index -r requirements.txt -f wheelhouse
+RUN pip install ./wheelhouse/*
 
-COPY . .
+COPY src .
+COPY config-template.json launch.sh ./
 ENTRYPOINT ["./launch.sh"]
