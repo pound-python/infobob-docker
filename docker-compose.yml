@@ -1,4 +1,4 @@
-version: '3'
+version: "3.2"
 
 services:
   certbot:
@@ -15,7 +15,10 @@ services:
       - "443:443"
       - "80:80"
     volumes:
-      - "letsencrypt:/etc/letsencrypt"
+      - type: volume
+        source: letsencrypt
+        target: "/etc/letsencrypt"
+        read_only: true
 
   znc:
     image: "znc:1.7-slim"
