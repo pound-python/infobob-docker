@@ -1,0 +1,148 @@
+{
+    "irc": {
+        "nickname": "infobob",
+        "server": "znc",
+        "port": 6667,
+        "ssl": false,
+        "password": "<<<INVALID>>>",
+        "nickserv_pw": null,
+        "autojoin": [
+            "#infobob",
+            "#python",
+            "#python-offtopic",
+            "#python-ops",
+            "#twisted",
+            "#twisted.web",
+            "#twisted-dev",
+            "#buildbot"
+        ]
+    },
+    "database": {
+        "dbm": null,
+        "sqlite": {
+            "db_file": "/app/infobob.sqlite"
+        }
+    },
+    "web": {
+        "port": 8080,
+        "root": "/usr/src/app/web",
+        "url": "https://infobob.habnabit.org/"
+    },
+    "misc": {
+        "magic8_file": null,
+        "manhole": {
+            "socket": null,
+            "passwd_file": null
+        },
+        "debug": {
+            "spew": false
+        }
+    },
+    "channels": {
+        "defaults": {
+            "commands": [
+                [
+                    "deny",
+                    "all"
+                ]
+            ],
+            "flood_control": [
+                3,
+                2
+            ]
+        },
+        "#python-offtopic": {
+            "commands": [
+                [
+                    "allow",
+                    "all"
+                ],
+                [
+                    "deny",
+                    "divine",
+                    "reload",
+                    "lock",
+                    "unlock",
+                    "chain_learn",
+                    "chain_splice",
+                    "lol"
+                ]
+            ],
+            "have_ops": true
+        },
+        "#python": {
+            "commands": [
+                [
+                    "allow",
+                    "codepad",
+                    "redent",
+                    "repaste",
+                    "anti_trigger"
+                ]
+            ],
+            "have_ops": true
+        },
+        "#python-ops": {
+            "have_ops": true
+        },
+        "#python-unregistered": {
+            "anti_redirect": "#python"
+        },
+        "#twisted": {
+            "commands": [
+                [
+                    "allow",
+                    "codepad",
+                    "redent",
+                    "repaste"
+                ]
+            ]
+        },
+        "#twisted.web": {
+            "commands": [
+                [
+                    "allow",
+                    "codepad",
+                    "redent",
+                    "repaste"
+                ]
+            ]
+        },
+        "#twisted-dev": {
+            "commands": [
+                [
+                    "allow",
+                    "codepad",
+                    "redent",
+                    "repaste"
+                ]
+            ]
+        },
+        "#buildbot": {
+            "commands": [
+                [
+                    "allow",
+                    "codepad",
+                    "redent",
+                    "repaste"
+                ]
+            ]
+        },
+        "privmsg": {
+            "commands": [
+                [
+                    "allow",
+                    "all"
+                ]
+            ]
+        },
+        "#infobob": {
+            "commands": [
+                [
+                    "allow",
+                    "all"
+                ]
+            ]
+        }
+    }
+}

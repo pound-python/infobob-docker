@@ -29,6 +29,7 @@ services:
     build: "./infobob"
     volumes:
       - "infobob:/app"
+    env_file: ./env-secrets
 
 volumes:
   infobob:
