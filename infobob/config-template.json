@@ -20,7 +20,7 @@
     "database": {
         "dbm": null,
         "sqlite": {
-            "db_file": "/app/infobob.sqlite"
+            "db_file": "/app/db/infobob.sqlite"
         }
     },
     "web": {
