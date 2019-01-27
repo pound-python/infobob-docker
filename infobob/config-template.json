@@ -25,7 +25,6 @@
     },
     "web": {
         "port": 8080,
-        "root": "/usr/src/app/web",
         "url": "https://infobob.habnabit.org/"
     },
     "misc": {
