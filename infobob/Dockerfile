@@ -3,6 +3,9 @@ FROM pypy:2
 WORKDIR /usr/src/app
 COPY src/current-requirements.txt ./
 RUN pip wheel --no-cache-dir -r current-requirements.txt -w wheelhouse
+#RUN mkdir ./src
+COPY src ./src/
+RUN pip wheel --no-cache-dir --no-deps ./src -w wheelhouse
 
 FROM pypy:2-slim
 
@@ -15,6 +18,5 @@ WORKDIR /usr/src/app
 COPY --from=0 /usr/src/app/wheelhouse wheelhouse
 RUN pip install ./wheelhouse/*
 
-COPY src .
 COPY config-template.json launch.sh ./
 ENTRYPOINT ["./launch.sh"]
