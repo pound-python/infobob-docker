@@ -29,7 +29,7 @@ services:
       - "infobob-testing-config"
 
   rproxy:
-    image: "poundpython/rproxy:branch-testing"
+    image: "poundpython/rproxy"
     deploy:
       replicas: 1
     configs:
