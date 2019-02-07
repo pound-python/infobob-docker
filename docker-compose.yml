@@ -1,58 +1,16 @@
-version: "3.3"
+version: "3.5"
 
 services:
-  znc:
-    image: "znc:1.7-slim"
-    deploy:
-      replicas: 1
+  deployscript:
+    build: "./deployscript"
+    image: "poundpython/infobob-docker-deploy"
     volumes:
-      - "zncdata:/znc-data"
-
-  infobob-master:
-    image: "poundpython/infobob:branch-master"
-    deploy:
-      replicas: 1
-    command:
-      - "/run/secrets/infobob-master-config"
-    secrets:
-      - "infobob-master-config"
-    volumes:
-      - "infobob:/app"
-
-  infobob-testing:
-    image: "poundpython/infobob:branch-testing"
-    deploy:
-      replicas: 1
-    command:
-      - "/run/secrets/infobob-testing-config"
-    secrets:
-      - "infobob-testing-config"
-
-  rproxy:
-    image: "poundpython/rproxy"
-    deploy:
-      replicas: 1
-    configs:
-      - source: rproxy-config
-        target: "/usr/src/app/rproxy.ini"
-    ports:
-      - target: 8080
-        published: 80
-        protocol: tcp
-        mode: host
-      - target: 8443
-        published: 443
-        protocol: tcp
-        mode: host
-
-configs:
-  rproxy-config:
-    file: ./rproxy-prod.ini
-
-secrets:
-  infobob-master-config: {external: true}
-  infobob-testing-config: {external: true}
-
-volumes:
-  infobob:
-  zncdata:
+      - type: bind
+        source: /var/lib/infobob-gpg
+        target: /run/gnupg
+        read_only: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: tmpfs
+        target: /tmp
