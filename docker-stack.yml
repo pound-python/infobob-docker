@@ -28,6 +28,11 @@ services:
     secrets:
       - "infobob-testing-config"
 
+  webhooks:
+    image: "poundpython/webhooks"
+    deploy:
+      replicas: 1
+
   rproxy:
     image: "poundpython/rproxy"
     deploy:

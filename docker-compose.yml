@@ -6,7 +6,7 @@ services:
     image: "poundpython/infobob-docker-deploy"
     volumes:
       - type: bind
-        source: /var/lib/infobob-gpg
+        source: /var/lib/infobob-gnupg
         target: /run/gnupg
         read_only: true
       - type: bind
