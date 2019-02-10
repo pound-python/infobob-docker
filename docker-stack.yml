@@ -52,14 +52,15 @@ services:
 
 configs:
   rproxy-config:
+    name: rproxy-ini-${HASHED_rproxy_ini}
     file: ./rproxy-prod.ini
 
 secrets:
   infobob-master-config:
-    name: infobob-master-config-${SECRET_HASH_infobob_master_config}
+    name: infobob-master-config-${HASHED_infobob_master_config}
     external: true
   infobob-testing-config:
-    name: infobob-testing-config-${SECRET_HASH_infobob_testing_config}
+    name: infobob-testing-config-${HASHED_infobob_testing_config}
     external: true
 
 volumes:

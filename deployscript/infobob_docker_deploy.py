@@ -29,9 +29,12 @@ secrets = {
     'infobob-master-config': config_dir.joinpath('master.yaml'),
     'infobob-testing-config': config_dir.joinpath('testing.yaml'),
 }
+configs = {
+    'rproxy-ini': checkout.joinpath('rproxy-prod.ini'),
+}
 
 @attr.s
-class Secret:
+class Hashed:
     name = attr.ib()
     hashed = attr.ib()
     sops_data = attr.ib()
@@ -42,17 +45,27 @@ class Secret:
 
     @property
     def env_name(self):
-        return 'SECRET_HASH_{}'.format(self.name.replace('-', '_'))
+        return 'HASHED_{}'.format(self.name.replace('-', '_'))
 
-def read_secrets():
-    for name, path in secrets.items():
-        sops_out = subprocess.run(
-            echocmd(['sops', '-d', '--output-type', 'json', path]),
-            stdout=subprocess.PIPE, check=True)
+    @classmethod
+    def from_path(cls, name, path, *, read_sops=False):
+        if read_sops:
+            sops_out = subprocess.run(
+                echocmd(['sops', '-d', '--output-type', 'json', path]),
+                stdout=subprocess.PIPE, check=True)
+            sops_data = sops_out.stdout
+        else:
+            sops_data = None
         with path.open('rb') as infile:
             data = infile.read()
         hashed = base64.b32encode(hashlib.blake2b(data, digest_size=10).digest()).decode().lower()
-        yield Secret(name=name, hashed=hashed, sops_data=sops_out.stdout)
+        return cls(name=name, hashed=hashed, sops_data=sops_data)
+
+def read_files():
+    for name, path in secrets.items():
+        yield Hashed.from_path(name, path, read_sops=True)
+    for name, path in configs.items():
+        yield Hashed.from_path(name, path)
 
 @click.group()
 @click.option('--url', default='https://github.com/pound-python/infobob-docker')
@@ -71,16 +84,22 @@ def main(url, branch):
     ]))
 
 @main.command('hash')
-def do_hash():
-    for secret in read_secrets():
-        click.echo('{0.name}: {0.hashed}'.format(secret))
+@click.option('--as-env', is_flag=True)
+def do_hash(as_env=False):
+    for f in list(read_files()):
+        if as_env:
+            click.echo('{0.env_name}={0.hashed}'.format(f))
+        else:
+            click.echo('{0.name}: {0.hashed}'.format(f))
 
 @main.command('deploy')
 def do_deploy():
     client = docker.from_env()
-    loaded = list(read_secrets())
+    loaded = list(read_files())
 
     for secret in loaded:
+        if secret.sops_data is None:
+            continue
         try:
             client.secrets.get(secret.full_name)
         except docker.errors.NotFound:
@@ -96,8 +115,8 @@ def do_deploy():
             })
 
     env = dict(os.environ)
-    for secret in loaded:
-        env[secret.env_name] = secret.hashed
+    for f in loaded:
+        env[f.env_name] = f.hashed
 
     # no 'docker stack' in docker-py
     subprocess.check_call(echocmd([
