@@ -96,7 +96,7 @@ func main() {
 		log.Fatalf("error making github hook: %v", err)
 	}
 	http.HandleFunc("/webhooks/github", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("req: %+v", r)
+		log.Printf("github req via %s", r.Header.Get("User-Agent"))
 		payload, err := githubHook.Parse(r, github.PingEvent, github.ReleaseEvent, github.PullRequestEvent)
 		if err != nil {
 			log.Printf("err: %+v", err)
@@ -111,7 +111,7 @@ func main() {
 	}
 	dockerHookPath := fmt.Sprintf("/webhooks/docker/%s", os.Getenv("DOCKER_HOOK_SECRET"))
 	http.HandleFunc(dockerHookPath, func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("req: %+v", r)
+		log.Printf("docker req via %s", r.Header.Get("User-Agent"))
 		payload, err := dockerHook.Parse(r)
 		if err != nil {
 			log.Printf("err: %+v", err)
@@ -120,9 +120,9 @@ func main() {
 		}
 	})
 
-	generalHookPath := fmt.Sprintf("/webhooks/general/%s", os.Getenv("GENERAL_HOOK_SECRET"))
-	http.HandleFunc(generalHookPath, func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("req: %+v", r)
+	genericHookPath := fmt.Sprintf("/webhooks/generic/%s", os.Getenv("GENERIC_HOOK_SECRET"))
+	http.HandleFunc(genericHookPath, func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("generic req via %s", r.Header.Get("User-Agent"))
 		containerCh := make(chan container.ContainerCreateCreatedBody)
 		spawnCh <- deployParams{
 			branch:      "testing",

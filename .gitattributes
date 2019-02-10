@@ -1,1 +1,2 @@
-infobob-config/* diff=sopsdiffer
+/infobob-config/* diff=sopsdiffer
+/webhooks-env.yaml diff=sopsdiffer
