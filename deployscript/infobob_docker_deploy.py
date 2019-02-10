@@ -25,12 +25,22 @@ def echocmd(cmd):
 
 checkout = pathlib.Path.cwd().joinpath('checkout')
 config_dir = checkout.joinpath('infobob-config')
-secrets = {
-    'infobob-master-config': config_dir.joinpath('master.yaml'),
-    'infobob-testing-config': config_dir.joinpath('testing.yaml'),
-}
-configs = {
-    'rproxy-ini': checkout.joinpath('rproxy-prod.ini'),
+hashed_files = {
+    'infobob-master-config': {
+        'path': config_dir.joinpath('master.yaml'),
+        'sops_format': 'json',
+    },
+    'infobob-testing-config': {
+        'path': config_dir.joinpath('testing.yaml'),
+        'sops_format': 'json',
+    },
+    'webhooks-env': {
+        'path': checkout.joinpath('webhooks-env.yaml'),
+        'sops_format': 'dotenv',
+    },
+    'rproxy-ini': {
+        'path': checkout.joinpath('rproxy-prod.ini'),
+    },
 }
 
 @attr.s
@@ -48,10 +58,10 @@ class Hashed:
         return 'HASHED_{}'.format(self.name.replace('-', '_'))
 
     @classmethod
-    def from_path(cls, name, path, *, read_sops=False):
-        if read_sops:
+    def from_path(cls, name, path, *, sops_format=None):
+        if sops_format is not None:
             sops_out = subprocess.run(
-                echocmd(['sops', '-d', '--output-type', 'json', path]),
+                echocmd(['sops', '-d', '--output-type', sops_format, path]),
                 stdout=subprocess.PIPE, check=True)
             sops_data = sops_out.stdout
         else:
@@ -62,10 +72,8 @@ class Hashed:
         return cls(name=name, hashed=hashed, sops_data=sops_data)
 
 def read_files():
-    for name, path in secrets.items():
-        yield Hashed.from_path(name, path, read_sops=True)
-    for name, path in configs.items():
-        yield Hashed.from_path(name, path)
+    for name, args in hashed_files.items():
+        yield Hashed.from_path(name, **args)
 
 @click.group()
 @click.option('--url', default='https://github.com/pound-python/infobob-docker')

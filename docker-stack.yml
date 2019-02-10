@@ -32,6 +32,10 @@ services:
     image: "poundpython/webhooks"
     deploy:
       replicas: 1
+    command:
+      - "/run/secrets/webhooks-env"
+    secrets:
+      - "webhooks-env"
 
   rproxy:
     image: "poundpython/rproxy"
@@ -61,6 +65,9 @@ secrets:
     external: true
   infobob-testing-config:
     name: infobob-testing-config-${HASHED_infobob_testing_config}
+    external: true
+  webhooks-env:
+    name: webhooks-env-${HASHED_webhooks_env}
     external: true
 
 volumes:
