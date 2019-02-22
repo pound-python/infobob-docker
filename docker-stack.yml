@@ -41,6 +41,8 @@ services:
     image: "poundpython/rproxy"
     deploy:
       replicas: 1
+    volumes:
+      - "rproxy-certs:/usr/src/app/certs"
     configs:
       - source: rproxy-config
         target: "/usr/src/app/rproxy.ini"
@@ -72,4 +74,5 @@ secrets:
 
 volumes:
   infobob:
+  rproxy-certs:
   zncdata:
