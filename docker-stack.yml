@@ -5,6 +5,13 @@ services:
     image: "znc:1.7-slim"
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: "25M"
+        reservations:
+          cpus: "0.1"
+          memory: "25M"
     volumes:
       - "zncdata:/znc-data"
 
@@ -12,6 +19,13 @@ services:
     image: "poundpython/infobob:branch-master"
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: "200M"
+        reservations:
+          cpus: "0.5"
+          memory: "125M"
     command:
       - "/run/secrets/infobob-master-config"
     secrets:
@@ -23,6 +37,13 @@ services:
     image: "poundpython/infobob:branch-testing"
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "0"
+        reservations:
+          cpus: "0.1"
+          memory: "0"
     command:
       - "/run/secrets/infobob-testing-config"
     secrets:
@@ -32,6 +53,13 @@ services:
     image: "poundpython/webhooks"
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "25M"
+        reservations:
+          cpus: "0.1"
+          memory: "25M"
     command:
       - "/run/secrets/webhooks-env"
     secrets:
@@ -41,6 +69,13 @@ services:
     image: "poundpython/rproxy"
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: "75M"
+        reservations:
+          cpus: "0.1"
+          memory: "50M"
     volumes:
       - "rproxy-certs:/usr/src/app/certs"
     configs:
