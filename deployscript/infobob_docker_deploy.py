@@ -3,6 +3,7 @@ import base64
 import click
 import docker
 import hashlib
+import json
 import os
 import pathlib
 import subprocess
@@ -92,13 +93,20 @@ def main(url, branch):
     ]))
 
 @main.command('hash')
-@click.option('--as-env', is_flag=True)
-def do_hash(as_env=False):
-    for f in list(read_files()):
-        if as_env:
-            click.echo('{0.env_name}={0.hashed}'.format(f))
-        else:
-            click.echo('{0.name}: {0.hashed}'.format(f))
+@click.option('-f', '--format', 'fmt', type=click.Choice([
+    'json', 'env', 'env-oneline',
+], case_sensitive=False), default='json')
+def do_hash(fmt):
+    as_env = fmt in ('env', 'env-oneline')
+    as_dict = {
+        (f.env_name if as_env else f.name): f.hashed
+        for f in read_files()}
+    if fmt == 'json':
+        click.echo(json.dumps(as_dict, indent=2))
+    elif as_env:
+        env_items = ['{}={}'.format(*kv) for kv in as_dict.items()]
+        separator = ' ' if fmt == 'env-oneline' else '\n'
+        click.echo(separator.join(env_items))
 
 @main.command('deploy')
 def do_deploy():
