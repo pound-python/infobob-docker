@@ -109,6 +109,5 @@ secrets:
 
 volumes:
   infobob:
-  rproxy-certs:
   zncdata:
   caddy-data:

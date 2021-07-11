@@ -4,22 +4,26 @@
 	https_port 8443
 }
 
-(rproxy) {
+(proxy_common) {
   request_header X-Forwarded-Port {port}
 }
 
 infobob.habnabit.org {
+  import proxy_common
   reverse_proxy http://tasks.infobob-master:8080
 }
 
 znc.infobob.habnabit.org {
+  import proxy_common
   reverse_proxy http://tasks.znc:6667
 }
 
 testing.infobob.habnabit.org {
+  import proxy_common
   reverse_proxy http://tasks.infobob-testing:8080
 }
 
 webhooks.infobob.habnabit.org {
+  import proxy_common
   reverse_proxy http://tasks.infobob-testing:3000
 }
