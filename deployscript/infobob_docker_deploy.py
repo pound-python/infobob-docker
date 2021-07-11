@@ -12,16 +12,16 @@ import traceback
 
 def _excepthook(typ, value, tb):
     if isinstance(value, subprocess.CalledProcessError):
-        click.secho('\n{}'.format(value), fg='red')
+        click.secho('\n{}'.format(value), fg='red', err=True)
     else:
-        click.secho('\n*** traceback follows:', fg='red')
+        click.secho('\n*** traceback follows:', fg='red', err=True)
         error = ''.join(traceback.format_exception(typ, value, tb))
-        click.secho(error, fg='red')
+        click.secho(error, fg='red', err=True)
 
 sys.excepthook = _excepthook
 
 def echocmd(cmd):
-    click.secho('==> {!r}'.format(cmd), fg='yellow')
+    click.secho('==> {!r}'.format(cmd), fg='yellow', err=True)
     return cmd
 
 checkout = pathlib.Path.cwd().joinpath('checkout')
@@ -91,6 +91,15 @@ def main(url, branch):
         '--depth=1', '--branch', branch,
         url, checkout,
     ]))
+
+@main.command('encrypt')
+@click.option('-f', '--format', 'fmt', type=click.Choice([
+    'json', 'yaml', 'dotenv',
+], case_sensitive=False), default='json')
+def do_encrypt(fmt):
+    subprocess.run(
+        echocmd(['sops', '-e', '--input-type', fmt, '--output-type', fmt, '/dev/stdin']),
+        cwd=checkout, check=True)
 
 @main.command('hash')
 @click.option('-f', '--format', 'fmt', type=click.Choice([
