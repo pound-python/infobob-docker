@@ -65,8 +65,8 @@ services:
     secrets:
       - "webhooks-env"
 
-  rproxy:
-    image: "poundpython/rproxy"
+  caddy:
+    image: "caddy:2"
     deploy:
       replicas: 1
       resources:
@@ -77,10 +77,10 @@ services:
           cpus: "0.1"
           memory: "50M"
     volumes:
-      - "rproxy-certs:/usr/src/app/certs"
+      - "caddy-data:/data"
     configs:
-      - source: rproxy-config
-        target: "/usr/src/app/rproxy.ini"
+      - source: caddy-config
+        target: "/etc/caddy/Caddyfile"
     ports:
       - target: 8080
         published: 80
@@ -92,9 +92,9 @@ services:
         mode: host
 
 configs:
-  rproxy-config:
-    name: rproxy-ini-${HASHED_rproxy_ini}
-    file: ./rproxy-prod.ini
+  caddy-config:
+    name: caddyfile-txt-${HASHED_caddyfile_txt}
+    file: ./caddyfile-prod.txt
 
 secrets:
   infobob-master-config:
@@ -111,3 +111,4 @@ volumes:
   infobob:
   rproxy-certs:
   zncdata:
+  caddy-data:

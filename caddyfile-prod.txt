@@ -1,0 +1,25 @@
+{
+  email _@habnab.it
+	http_port 8080
+	https_port 8443
+}
+
+(rproxy) {
+  request_header X-Forwarded-Port {port}
+}
+
+infobob.habnabit.org {
+  reverse_proxy http://tasks.infobob-master:8080
+}
+
+znc.infobob.habnabit.org {
+  reverse_proxy http://tasks.znc:6667
+}
+
+testing.infobob.habnabit.org {
+  reverse_proxy http://tasks.infobob-testing:8080
+}
+
+webhooks.infobob.habnabit.org {
+  reverse_proxy http://tasks.infobob-testing:3000
+}

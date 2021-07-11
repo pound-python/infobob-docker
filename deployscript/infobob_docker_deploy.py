@@ -39,8 +39,8 @@ hashed_files = {
         'path': checkout.joinpath('webhooks-env.yaml'),
         'sops_format': 'dotenv',
     },
-    'rproxy-ini': {
-        'path': checkout.joinpath('rproxy-prod.ini'),
+    'caddyfile-txt': {
+        'path': checkout.joinpath('caddyfile-prod.txt'),
     },
 }
 
